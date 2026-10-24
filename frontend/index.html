@@ -547,7 +547,7 @@ $("upBtn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.pre
 $("play").onclick=playTour;
 
 /* ================= Backend connection (Gemma 4 via Flask) ================= */
-const API="http://127.0.0.1:5000/api/analyze";
+const API="https://YOUR-RENDER-URL.onrender.com/api/analyze";
 let prevTopic="net",busy=false,cErr="",unc=[];
 UI.demo=["Sample diagrams have hand-made clickable regions. Your own uploads are analysed by the Gemma 4 backend at 127.0.0.1:5000 (run python app.py first).","नमूना चित्रों में हाथ से बने क्लिक करने योग्य हिस्से हैं। आपकी अपनी तस्वीर Gemma 4 बैकएंड (127.0.0.1:5000) पढ़ता है; पहले python app.py चलाएँ।"];
 
