@@ -1,611 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>VisualStudy AI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:wght@600;800&family=Noto+Sans+Devanagari:wght@400;600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<title>FieldScout AI</title>
 <style>
-:root{color-scheme:light;--bg:#f3f8ff;--grid:#e3eefc;--card:#fff;--ink:#1f2a4d;--mute:#5f6f94;--line:#d3e2fa;--blue:#3d6af2;--hl:#ffe27a;--hlink:#1f2a4d;--ok:#12a06e;--bad:#e5604f;--node:#e8f0ff;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-
-:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1829;--grid:#1a2840;--card:#16223a;--ink:#e8eefb;--mute:#9aaac6;--line:#2a3a58;--blue:#7ea2ff;--ok:#4cc38a;--bad:#ff7a72;--node:#1d2d4d}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Nunito Sans","Noto Sans Devanagari",system-ui,sans-serif;background-image:radial-gradient(circle at 10% 0,#ffe9f1 0,transparent 38%),radial-gradient(circle at 92% 6%,#d9f1ff 0,transparent 40%),radial-gradient(circle at 50% 100%,#e6fbe9 0,transparent 42%);background-attachment:fixed}
-:lang(hi),.hi{font-family:"Noto Sans Devanagari","Nunito Sans",sans-serif;line-height:1.75}
-h1,h2,h3{font-family:"Bricolage Grotesque","Nunito Sans",system-ui,sans-serif;margin:0;line-height:1.15}
-.wrap{max-width:1100px;margin:0 auto;padding:16px}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:8px 0 16px}
-.logo{font:800 1.5rem "Bricolage Grotesque",sans-serif}
-.logo span{background:var(--hl);color:var(--hlink);padding:0 .3em;border-radius:4px}
-.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
-.seg button{border:0;background:var(--card);color:var(--ink);padding:6px 12px;font:inherit;font-weight:700;cursor:pointer}
-.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-select{font:inherit;padding:6px 8px;border:1.5px solid var(--ink);border-radius:8px;background:var(--card);color:var(--ink)}
-.main{display:grid;grid-template-columns:1.15fr 1fr;gap:16px}
-@media(max-width:820px){.main{grid-template-columns:1fr}}
-.card{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:16px;min-width:0}
-.hint{color:var(--mute);font-size:.9rem;margin:6px 0 10px}
-svg.dia{width:100%;height:auto;display:block}
-.dia line{stroke:var(--mute);stroke-width:2}
-.node{cursor:pointer;outline:none}
-.node rect,.node path{fill:var(--node);stroke:var(--ink);stroke-width:2;transition:fill .15s}
-.node text{fill:var(--ink);font:700 14px "Nunito Sans",sans-serif;text-anchor:middle;pointer-events:none}
-.node:hover rect,.node:hover path{fill:var(--hl)}
-.node:hover text{fill:#14233b}
-.node.sel rect,.node.sel path{fill:var(--hl);stroke-width:3.5}
-.node.sel text{fill:#14233b}
-.node:focus-visible rect,.node:focus-visible path{stroke:var(--blue);stroke-width:4}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.btn{font:inherit;font-weight:700;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
-.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
-.btn:focus-visible,.seg button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.prev{max-width:100%;border-radius:8px;display:block;border:1px solid var(--line)}
-.note{border-left:5px solid var(--hl);background:var(--node);padding:10px 12px;border-radius:0 8px 8px 0;font-size:.92rem;margin:10px 0}
-.tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--ink);margin:-4px 0 14px;overflow-x:auto}
-.tabs button{border:0;background:none;color:var(--mute);font:inherit;font-weight:700;padding:8px 12px;cursor:pointer;border-bottom:4px solid transparent;white-space:nowrap}
-.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--hl)}
-.tabs button:focus-visible{outline:3px solid var(--blue)}
-.hl{background:var(--hl);color:#14233b;padding:0 .3em;border-radius:3px}
-.opt{display:block;width:100%;text-align:left;font:inherit;margin:6px 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
-.opt:hover:not(:disabled){border-color:var(--ink)}
-.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
-.opt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--card))}
-.opt:focus-visible{outline:3px solid var(--blue)}
-ul.n{padding-left:20px;margin:8px 0}
-ul.n li{margin:6px 0}
-.prog{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
-.prog div{border:1.5px solid var(--ink);border-radius:10px;background:var(--card);padding:10px 12px}
-.prog b{display:block;font:800 1.4rem "Bricolage Grotesque",sans-serif}
-.prog small{color:var(--mute)}
-.bar{height:6px;background:var(--line);border-radius:4px;margin-top:6px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
-.chat{max-height:240px;overflow:auto;margin-bottom:10px}
-.msg{padding:8px 12px;border-radius:10px;margin:6px 0;max-width:92%}
-.me{background:var(--blue);color:#fff;margin-left:auto}
-.ai{background:var(--node)}
-form.ask{display:flex;gap:8px}
-form.ask input{flex:1;min-width:0;font:inherit;padding:8px 10px;border:1.5px solid var(--ink);border-radius:8px;background:var(--card);color:var(--ink)}
-footer{color:var(--mute);font-size:.85rem;padding:20px 0 8px}
-.hero{padding:8px 0 22px;max-width:780px}
-.hero h1{font-size:clamp(1.9rem,5.5vw,3.2rem);font-weight:800;letter-spacing:-.02em}
-.hero p{font-size:1.1rem;color:var(--mute);margin:10px 0 14px;max-width:60ch}
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chips span{border:1.5px solid var(--ink);border-radius:999px;padding:3px 12px;font-size:.88rem;font-weight:700;background:var(--card)}
-.swrap{position:relative;overflow:hidden;border-radius:8px}
-.scan{position:absolute;left:0;right:0;top:0;height:3px;background:var(--blue);box-shadow:0 0 18px 6px var(--blue);opacity:0;pointer-events:none}
-.scan.go{animation:sc 1.7s ease-in-out}
-@keyframes sc{0%{top:0;opacity:1}100%{top:100%;opacity:1}}
-.ana{font-size:.9rem;font-weight:700;margin:8px 0 0;min-height:1.5em;color:var(--mute)}
-.ana.done{color:var(--ok)}
-.tp{margin-bottom:12px}
-.card{border:2px solid var(--line);border-radius:22px;box-shadow:0 5px 0 #c6d9f8}
-.seg{border-color:var(--blue);border-radius:12px}
-.seg button[aria-pressed=true]{background:var(--blue);color:#fff}
-select{border-color:var(--blue);border-radius:12px}
-.btn{border:2px solid var(--line);border-radius:12px;box-shadow:0 3px 0 var(--line)}
-.btn:active{transform:translateY(2px);box-shadow:none}
-.btn.pri{background:var(--blue);border-color:var(--blue);box-shadow:0 3px 0 #2b4fc4}
-.chips span{border:0}
-.chips span:nth-child(1){background:#dcecff}.chips span:nth-child(2){background:#d9f7ea}.chips span:nth-child(3){background:#ffe6d6}.chips span:nth-child(4){background:#ece6ff}
-.node rect,.node path{stroke:var(--blue)}
-.node[data-id=internet] :is(rect,path){fill:#dcecff}.node[data-id=router] rect{fill:#ece6ff}.node[data-id=switch] rect{fill:#d9f7ea}.node[data-id=server] rect{fill:#ffe6d6}.node[data-id=client] rect{fill:#fff1b8}
-.node[data-id=vc] rect,.node[data-id=ra] rect,.node[data-id=rv] rect{fill:#cfe3ff}.node[data-id=ao] rect,.node[data-id=la] rect,.node[data-id=lv] rect{fill:#ffd6d6}
-.node[data-id]:hover :is(rect,path),.node[data-id].sel :is(rect,path){fill:var(--hl)}
-.tabs{border-bottom:2px solid var(--line)}
-.tabs button[aria-selected=true]{color:var(--blue);border-bottom-color:var(--blue)}
-.opt{border:2px solid var(--line);border-radius:12px}
-.opt:hover:not(:disabled){border-color:var(--blue);background:#f0f5ff}
-.note{background:#fff7d6;border-left-color:#f5c518}
-.prog div{border:2px solid var(--line);border-radius:18px}
-.prog div:nth-child(1){background:#d9f7ea}.prog div:nth-child(2){background:#ffe6d6}.prog div:nth-child(3){background:#ece6ff}
-.ai{background:#e8f0ff}
-.bar{background:#ffffffaa}
-.dot{fill:#ff5d8f;stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 7px #ff5d8f);transition:transform .9s ease-in-out;pointer-events:none}
-.prog{grid-template-columns:repeat(4,1fr)}.prog div:nth-child(4){background:#fff1b8}
-@media(max-width:600px){.prog{grid-template-columns:repeat(2,1fr)}}
-:root{--ink:#101a3a;--mute:#34416b;--blue:#2a56e0;--ok:#0b7a52;--bad:#c2362a}
-body{font-size:17px}
-.hero p{color:#25325c;font-size:1.15rem}
-.hint,footer{color:var(--mute);font-size:.95rem}
-.ana{font-size:1rem;color:var(--mute)}
-.node text{font:800 15px "Nunito Sans","Noto Sans Devanagari",sans-serif;fill:#101a3a}
-.tabs button{font-size:1rem;color:#34416b}
-.tabs button[aria-selected=true]{color:var(--blue)}
-.opt{font-size:1.02rem;font-weight:600;color:var(--ink)}
-.opt:disabled{color:var(--ink);opacity:1;cursor:default}
-.chips span{color:var(--ink)}
-.prog small{color:var(--mute);font-size:.92rem;font-weight:700}
-.prog b{color:var(--ink)}
-.note{color:var(--ink);font-size:.98rem}
-input::placeholder{color:#55618a;opacity:1}
-.seg button{font-size:1rem}
-:root{--ink:#0a0f24;--mute:#1b2547;--line:#8fa5d4;--blue:#1f4bd8}
-body{background:#f4f8ff!important;background-image:none!important;color:#0a0f24;font-size:18px}
-.card{background:#fff;border:2.5px solid #0a0f24;box-shadow:0 5px 0 #0a0f24}
-h1,h2,h3,p,li,label,b{color:#0a0f24}
-.hero h1{font-size:clamp(2rem,6vw,3.3rem)}
-.hero p,.hint,footer,.prog small{color:#1b2547!important;font-weight:600}
-.chips span{border:2px solid #0a0f24;color:#0a0f24}
-.node rect,.node path{stroke:#0a0f24;stroke-width:2.5}
-.node text{font-size:17px;font-weight:800;fill:#0a0f24!important;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
-.dia line{stroke:#0a0f24;stroke-width:2.5}
-.tabs{border-bottom:3px solid #0a0f24}
-.tabs button{color:#0a0f24;font-size:1.05rem;font-weight:800}
-.tabs button[aria-selected=true]{background:#0a0f24;color:#fff;border-radius:10px 10px 0 0;border-bottom-color:#0a0f24}
-.seg{border:2px solid #0a0f24}
-.seg button{color:#0a0f24;background:#fff}
-.seg button[aria-pressed=true]{background:#1f4bd8;color:#fff}
-select{color:#0a0f24;border:2px solid #0a0f24}
-.btn{color:#0a0f24;border:2px solid #0a0f24;box-shadow:0 3px 0 #0a0f24}
-.btn.pri{background:#1f4bd8;color:#fff;border-color:#0a0f24}
-.opt{color:#0a0f24;border:2px solid #5b6f9e;font-weight:700}
-.opt.ok{background:#c8f5de;border-color:#0b7a52}
-.opt.no{background:#ffd9d4;border-color:#c2362a}
-.note{background:#fff3b0;color:#0a0f24;border-left:6px solid #0a0f24}
-.prog div{border:2px solid #0a0f24;color:#0a0f24}
-.ana{color:#0a0f24;font-weight:800}.ana.done{color:#0b7a52}
-.msg{color:#0a0f24}.me{color:#fff}.ai{background:#dfe9ff;border:1px solid #5b6f9e}
-input{color:#0a0f24}
-.tabs{border-bottom:3px solid #b9cbee}
-.tabs button[aria-selected=true]{background:#dfe9ff;color:#0a1f7a;border-bottom-color:#1f4bd8}
-html{color-scheme:light only}
-select,select option{background:#ffffff!important;color:#0a0f24!important;font-weight:700;color-scheme:light only}
-select{border:2px solid #1f4bd8!important;border-radius:12px;padding:8px 10px}
-.btn{background:#ffffff!important;color:#0a0f24!important;border:2px solid #1f4bd8;box-shadow:0 3px 0 #b9cbee}
-.btn.pri{background:#1f4bd8!important;color:#ffffff!important;box-shadow:0 3px 0 #9db6f3}
-.card{border:2.5px solid #8fa5d4;box-shadow:0 5px 0 #c3d4f4}
-.seg{border:2px solid #1f4bd8}
-.seg button{background:#ffffff!important;color:#0a0f24!important}
-.seg button[aria-pressed=true]{background:#1f4bd8!important;color:#ffffff!important}
-.tabs button{background:transparent!important;color:#0a0f24!important}
-.tabs button[aria-selected=true]{background:#dfe9ff!important;color:#0a1f7a!important}
-.opt{background:#ffffff!important;color:#0a0f24!important}
-.opt.ok{background:#c8f5de!important}.opt.no{background:#ffd9d4!important}
-input:not([type=file]){background:#ffffff!important;color:#0a0f24!important;border:2px solid #1f4bd8}
-.prog div{border:2px solid #8fa5d4}
-.chips span{border:2px solid #b9cbee}
-.note{border-left:6px solid #f5c518}
-.node rect,.node path{stroke:#2a4fc7;stroke-width:2.5}
-.dia line{stroke:#2a4fc7}
-.dot{stroke:#ffffff}
-.pf input{width:100%;font:inherit;font-weight:700;padding:8px 10px;border-radius:10px}
-.pf h4{margin:16px 0 6px;font-size:1.05rem}
-.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
-.sg div{border:2px solid #b9cbee;border-radius:14px;padding:8px 10px;background:#f0f5ff;font-weight:700;font-size:.92rem}
-.sg b{display:block;font:800 1.35rem 'Bricolage Grotesque',sans-serif}
-.pt,.bg{display:inline-block;margin:3px 4px 3px 0;padding:3px 10px;border-radius:999px;border:2px solid #b9cbee;background:#eef2fa;font-weight:700;font-size:.92rem;color:#0a0f24}
-.g1{background:#fff1b8;border-color:#e6c200}.g2{background:#c8f5de;border-color:#0b7a52}.g3{background:#ffd9d4;border-color:#c2362a}.bg.on{background:#ffe27a;border-color:#e6c200}
-.hbs{display:flex;gap:6px;align-items:flex-end;height:100px;border-bottom:2px solid #b9cbee}
-.hb{flex:1;height:100%;display:flex;align-items:flex-end}
-.hb i{display:block;width:100%;background:#2a56e0;border-radius:6px 6px 0 0;text-align:center}
-.hb small{color:#fff;font-size:.72rem;font-weight:700}
-.lgl li{font-size:.92rem}
-#dash,#cardsV{display:none}
-body[data-v=dash] #dash,body[data-v=cards] #cardsV{display:block}
-body[data-v=dash] .hero,body[data-v=dash] .main,body[data-v=dash] #prog,body[data-v=cards] .hero,body[data-v=cards] .main,body[data-v=cards] #prog{display:none}
-.wrap{padding-bottom:100px}
-.bnav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:4px;background:#fff;border-top:2.5px solid #8fa5d4;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
-.bnav button{flex:1;border:0;border-radius:12px;padding:6px 2px;font-family:inherit;font-size:.8rem;font-weight:800;line-height:1.25;color:#0a0f24;background:#fff!important;cursor:pointer}
-.bnav button.on{background:#dfe9ff!important;color:#0a1f7a}
-.bnav button:focus-visible{outline:3px solid #1f4bd8}
-.wb{background:linear-gradient(120deg,#6d3fe0,#c0408f);border-radius:22px;padding:22px;border:2.5px solid #8fa5d4;margin-bottom:14px}
-.wb h2,.wb p{color:#fff}
-.wb h2{font-size:clamp(1.6rem,5vw,2.3rem)}
-.wb p{margin:6px 0 16px;font-size:1.05rem}
-.wb .btn{background:#ffc94d!important;color:#1a1033!important;border:2px solid #fff;box-shadow:none}
-.st4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.st4 div{background:#fff;border:2px solid #b9cbee;border-top-style:solid;border-top-width:7px;border-radius:16px;padding:12px 14px;font-weight:700;color:#1b2547}
-.st4 b{display:block;font:800 2.1rem 'Bricolage Grotesque',sans-serif;color:#0a0f24}
-@media(max-width:700px){.st4{grid-template-columns:repeat(2,1fr)}}
-.wbars{display:flex;gap:10px;align-items:flex-end;height:170px;margin-top:12px}
-.wc{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
-.wc i{display:block;width:100%;background:linear-gradient(#a78bfa,#6d3fe0);border-radius:8px 8px 0 0}
-.wc i.td{background:#ffc94d}
-.wc small{font-weight:800;color:#1b2547}
-.fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.fc{background:#fff;border:2px solid #b9cbee;border-radius:16px;padding:14px;min-height:150px;cursor:pointer;display:flex;flex-direction:column;justify-content:center}
-.fc.ok{border-color:#0b7a52;background:#effcf5}
-.fc .fb{display:none}.fc.flip .fb{display:block}.fc.flip .ff{display:none}
-.ff b{display:block;font:800 1.25rem 'Bricolage Grotesque',sans-serif;margin-bottom:6px}
-.ff small{color:#1b2547;font-weight:600}
-.fc:focus-visible{outline:3px solid #1f4bd8}
-body{background:#fde8e0!important;font-family:'Instrument Sans','Noto Sans Devanagari',system-ui,sans-serif}
-h1,h2,h3,.st4 b,.sg b,.prog b,.ff b{font-family:'Instrument Sans','Noto Sans Devanagari',sans-serif}
-header{background:#64261b;border-radius:22px 22px 0 0;padding:14px 20px;margin:0}
-.logo{font:700 1.45rem 'Instrument Sans',sans-serif;color:#fff}
-.logo::before{content:'✳ ';color:#ff6a3d}
-.logo span{background:#d63d0e;color:#fff;border-radius:999px;padding:0 .55em}
-body[data-v=dash] header,body[data-v=cards] header{border-radius:22px;margin-bottom:16px}
-.hero{background:#64261b;border-radius:0 0 22px 22px;padding:20px 20px 30px;max-width:none;margin-bottom:18px}
-.hero h1{color:#fff;font-weight:500;letter-spacing:-.02em}
-.hero p{color:#f6dcd3!important;font-weight:500}
-.chips span{border:0}
-.seg{border:2px solid #fff;border-radius:999px}
-.seg button[aria-pressed=true]{background:#d63d0e!important;color:#fff!important}
-select{border:2px solid #fff!important;border-radius:999px;padding:8px 14px}
-.card{border:1px solid #f3cfc3;border-radius:22px;box-shadow:0 10px 28px rgba(100,38,27,.12)}
-.card h2,.card h3{color:#64261b}
-.btn{border:2px solid #64261b;color:#64261b!important;border-radius:999px;box-shadow:none;padding:9px 18px}
-.btn.pri{background:#d63d0e!important;border-color:#d63d0e;color:#fff!important}
-.tabs{border-bottom:2px solid #f3cfc3}
-.tabs button[aria-selected=true]{background:#fde4db!important;color:#64261b!important;border-bottom-color:#d63d0e}
-.node rect,.node path{stroke:#64261b}
-.dia line{stroke:#64261b}
-.node[data-id]:hover :is(rect,path),.node[data-id].sel :is(rect,path){fill:#ffb59a}
-.dot{fill:#ff5a2b}
-.scan{background:#ff5a2b;box-shadow:0 0 18px 6px #ff5a2b}
-.hl{background:#ffd0bd;color:#64261b}
-.note{background:#fff0e8;border-left:6px solid #d63d0e}
-.ai{background:#fde4db;border:0}
-.me{background:#d63d0e}
-.opt{border:2px solid #e6c3b8}
-.opt:hover:not(:disabled){border-color:#d63d0e}
-input:not([type=file]){border:2px solid #c9a79c}
-footer{color:#64261b!important}
-.bnav{border-top:1px solid #f3cfc3;box-shadow:0 -6px 20px rgba(100,38,27,.1)}
-.bnav button{color:#64261b}
-.bnav button.on{background:#fde4db!important;color:#64261b}
-.wb{background:linear-gradient(120deg,#64261b,#8c3524);border:0}
-.wb .btn{background:#d63d0e!important;color:#fff!important;border:2px solid #fff}
-.st4 div{border:0!important;color:#fff}
-.st4 b{color:#fff;font-weight:600;font-size:2.3rem}
-.st4 div:nth-child(1){background:#b5336f}.st4 div:nth-child(2){background:#d63d0e}.st4 div:nth-child(3){background:#0b6fe0}
-.st4 div:nth-child(4){background:#e6cbf8;color:#3a1230}.st4 div:nth-child(4) b{color:#3a1230}
-.wc i{background:linear-gradient(#e0609a,#b5336f)}
-.wc i.td{background:#ff7a3d}
-.sg div{background:#fff3ee;border-color:#f3cfc3}
-.prog div{border:0}
-.prog div:nth-child(1){background:#e6cbf8}.prog div:nth-child(2){background:#cfeeea}.prog div:nth-child(3){background:#ffd9cb}
-.pt,.bg{border-color:#f3cfc3}
-.fc{border:1px solid #f3cfc3}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  body { font-family: -apple-system, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; background: #0f1115; color: #e6e6e6; }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  p.sub { color: #999; margin-top: 0; margin-bottom: 28px; }
+  textarea, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #1a1d24; color: #eee; margin-bottom: 10px; box-sizing: border-box; font-size: 14px; }
+  button { background: #4f7cff; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  button:hover { background: #3a63e0; }
+  .card { background: #1a1d24; border: 1px solid #2a2d34; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .low { background: #1e3a2a; color: #4ade80; }
+  .medium { background: #3a331e; color: #facc15; }
+  .high { background: #3a1e1e; color: #f87171; }
+  .dup { color: #f87171; font-size: 13px; margin-top: 6px; }
+  .score { float: right; color: #999; font-size: 13px; }
+  #status { font-size: 13px; color: #999; margin-top: 6px; }
 </style>
 </head>
-<body data-v="dash">
-<div class="wrap">
-<header>
-  <div class="logo">Visual<span>Study</span> AI</div>
-  <div class="ctl">
-    <div class="seg" role="group" aria-label="Language">
-      <button id="lEn" aria-pressed="true">English</button><button id="lHi" aria-pressed="false" class="hi">हिन्दी</button>
-    </div>
-    <label><span class="sr" id="lvLbl"></span>
-      <select id="lvl"><option value="0"></option><option value="1"></option><option value="2"></option></select>
-    </label>
-  </div>
-</header>
+<body>
 
-<section id="dash"></section><section id="cardsV"></section>
+<h1>FieldScout AI</h1>
+<p class="sub">Field Report → Structured Dealer Intelligence Pipeline</p>
 
-<section class="hero">
-  <h1 id="hT"></h1><p id="hP"></p>
-  <div class="chips"><span>Gemma 4 vision</span><span>हिन्दी + English</span><span>Click-to-learn</span><span>Quiz + notes</span></div>
-</section>
+<input id="agentId" placeholder="Agent name (e.g. agent_jyotirmoy)" value="agent_jyotirmoy" />
+<textarea id="reportText" rows="3" placeholder="Paste field report text here..."></textarea>
+<button onclick="submitReport()">Submit Report</button>
+<div id="status"></div>
 
-<div class="main">
-  <section class="card" aria-labelledby="dT">
-    <h2 id="dT"></h2>
-    <p class="hint" id="dH"></p>
-    <div class="seg tp" id="topics" role="group" aria-label="Sample diagrams"><button id="tN" data-k="net"></button><button id="tH" data-k="heart"></button></div>
-    <div class="swrap"><div id="stage"></div><div class="scan" id="scan"></div></div>
-    <div class="ana" id="ana" aria-live="polite"></div>
-    <div class="row">
-      <label class="btn pri" id="upBtn" tabindex="0"><span id="upT"></span><input type="file" id="file" accept="image/*" hidden></label>
-      <button class="btn" id="play"></button>
-      <button class="btn" id="back" hidden></button>
-    </div>
-    <div class="note" id="demoNote"></div>
-  </section>
-
-  <section class="card">
-    <div class="tabs" role="tablist" id="tabs"></div>
-    <div id="pane" aria-live="polite"></div>
-  </section>
-</div>
-
-<div class="prog" id="prog"></div>
-<footer id="foot"></footer>
-<nav class="bnav" id="nv" aria-label="Main"></nav>
-</div>
+<h2 style="margin-top:36px;">Ranked Dealer Queue</h2>
+<div id="dealerList"></div>
 
 <script>
-let D={
- internet:{n:["Internet","इंटरनेट"],
-  s:["A huge worldwide network of networks. Your local network connects to it to reach websites and services.","दुनियाभर के नेटवर्कों का एक विशाल नेटवर्क। आपका लोकल नेटवर्क इससे जुड़कर वेबसाइट और सेवाओं तक पहुँचता है।"],
-  d:["Data travels across it in small packets that can take different paths to the same destination.","डेटा छोटे पैकेटों में चलता है, जो एक ही गंतव्य तक अलग-अलग रास्तों से जा सकते हैं।"],
-  a:["Packets are routed using IP addresses; protocols like TCP make sure they arrive complete and in order.","पैकेट IP पते से रूट होते हैं; TCP जैसे प्रोटोकॉल यह सुनिश्चित करते हैं कि वे पूरे और क्रम में पहुँचें।"]},
- router:{n:["Router","राउटर"],
-  s:["Forwards data between different networks, for example from your home network to the internet.","अलग-अलग नेटवर्कों के बीच डेटा आगे भेजता है, जैसे आपके घर के नेटवर्क से इंटरनेट तक।"],
-  d:["It reads the destination IP address of each packet and picks the best path using a routing table.","यह हर पैकेट का गंतव्य IP पता पढ़कर रूटिंग टेबल से सबसे अच्छा रास्ता चुनता है।"],
-  a:["Many routers also run NAT, letting several devices share one public IP address.","कई राउटर NAT भी चलाते हैं, जिससे कई डिवाइस एक सार्वजनिक IP पता साझा कर सकते हैं।"]},
- switch:{n:["Switch","स्विच"],
-  s:["Connects devices inside a local network so they can talk to each other.","लोकल नेटवर्क के अंदर डिवाइसों को जोड़ता है ताकि वे आपस में बात कर सकें।"],
-  d:["It learns each device’s MAC address and sends data only to the port that needs it.","यह हर डिवाइस का MAC पता सीखता है और डेटा सिर्फ़ ज़रूरी पोर्ट पर भेजता है।"],
-  a:["A switch works at Layer 2 (data link); a router works at Layer 3 (network).","स्विच लेयर 2 (डेटा लिंक) पर और राउटर लेयर 3 (नेटवर्क) पर काम करता है।"]},
- server:{n:["Server","सर्वर"],
-  s:["Provides resources and services, such as web pages, files or email, to other computers.","दूसरे कंप्यूटरों को वेब पेज, फ़ाइल या ईमेल जैसे संसाधन और सेवाएँ देता है।"],
-  d:["It listens for requests and sends back a response. One server can serve many clients at once.","यह अनुरोध सुनता है और जवाब भेजता है। एक सर्वर एक साथ कई क्लाइंट को सेवा दे सकता है।"],
-  a:["Servers are identified by an IP address and a port, for example port 443 for HTTPS.","सर्वर की पहचान IP पते और पोर्ट से होती है, जैसे HTTPS के लिए पोर्ट 443।"]},
- client:{n:["Client","क्लाइंट"],
-  s:["A computer or phone that requests services from a server.","कंप्यूटर या फ़ोन जो सर्वर से सेवाएँ माँगता है।"],
-  d:["Your browser is a client: it sends a request and shows the server’s response.","आपका ब्राउज़र एक क्लाइंट है: वह अनुरोध भेजता है और सर्वर का जवाब दिखाता है।"],
-  a:["This request–response pattern is called the client–server model.","इस अनुरोध–जवाब पैटर्न को क्लाइंट–सर्वर मॉडल कहते हैं।"]}
-};
-let Q=[
- {q:["Which device forwards data between different networks?","कौन-सा डिवाइस अलग-अलग नेटवर्कों के बीच डेटा भेजता है?"],o:[["Switch","स्विच"],["Router","राउटर"],["Client","क्लाइंट"]],a:1},
- {q:["What does a client do?","क्लाइंट क्या करता है?"],o:[["Requests services from a server","सर्वर से सेवाएँ माँगता है"],["Stores all web pages","सारे वेब पेज रखता है"],["Joins two networks","दो नेटवर्क जोड़ता है"]],a:0},
- {q:["Which device connects computers inside one local network?","कौन-सा डिवाइस एक लोकल नेटवर्क के कंप्यूटरों को जोड़ता है?"],o:[["Internet","इंटरनेट"],["Server","सर्वर"],["Switch","स्विच"]],a:2},
- {q:["A switch sends data using which kind of address?","स्विच डेटा भेजने के लिए किस तरह का पता इस्तेमाल करता है?"],o:[["MAC address","MAC पता"],["Email address","ईमेल पता"],["Street address","घर का पता"]],a:0}
-];
-let NOTES=[
- ["Topic: computer network architecture.","विषय: कंप्यूटर नेटवर्क आर्किटेक्चर।"],
- ["Server = provides services. Client = requests them.","सर्वर = सेवाएँ देता है। क्लाइंट = उन्हें माँगता है।"],
- ["Switch = connects devices in a local network (Layer 2, MAC).","स्विच = लोकल नेटवर्क के डिवाइस जोड़ता है (लेयर 2, MAC)।"],
- ["Router = forwards data between networks (Layer 3, IP).","राउटर = नेटवर्कों के बीच डेटा भेजता है (लेयर 3, IP)।"],
- ["Internet = the network of networks that the router connects to.","इंटरनेट = नेटवर्कों का नेटवर्क, जिससे राउटर जुड़ता है।"]
-];
-const UI={
- dT:["Computer network architecture","कंप्यूटर नेटवर्क आर्किटेक्चर"],
- dH:["Tap any part of the diagram to learn about it.","चित्र के किसी भी हिस्से को छूकर उसके बारे में जानें।"],
- up:["📷 Upload your own diagram","📷 अपना चित्र अपलोड करें"],
- back:["Back to sample","नमूना चित्र पर लौटें"],
- demo:["Demo mode: the sample diagram has hand-made clickable regions. Reading your own image needs the Gemma 4 backend, which is not connected to this page.","डेमो मोड: नमूना चित्र में हाथ से बने क्लिक करने योग्य हिस्से हैं। आपकी अपनी तस्वीर पढ़ने के लिए Gemma 4 बैकएंड चाहिए, जो इस पेज से जुड़ा नहीं है।"],
- lv:["Difficulty","कठिनाई"],lvs:[["Beginner","Intermediate","Advanced"],["शुरुआती","मध्यम","उन्नत"]],
- tabs:[["💡 Explain","🎯 Quiz","📝 Notes","💬 Ask","🎮 Challenge","📊 Profile"],["💡 समझें","🎯 क्विज़","📝 नोट्स","💬 पूछें","🎮 चुनौती","📊 प्रोफ़ाइल"]],
- pick:["Select a part of the diagram to see its explanation.","व्याख्या देखने के लिए चित्र का कोई हिस्सा चुनें।"],
- overview:["This diagram shows how devices in a network connect and exchange data, from your computers to the internet.","यह चित्र दिखाता है कि नेटवर्क में डिवाइस कैसे जुड़ते हैं और डेटा का आदान-प्रदान करते हैं, आपके कंप्यूटर से इंटरनेट तक।"],
- qOf:["Question","प्रश्न"],next:["Next question","अगला प्रश्न"],fin:["See score","स्कोर देखें"],again:["Try again","फिर से करें"],
- right:["Correct! ✅","सही! ✅"],wrong:["Not quite. Correct answer:","सही नहीं। सही उत्तर:"],
- score:["Your score","आपका स्कोर"],copy:["Copy notes","नोट्स कॉपी करें"],copied:["Copied","कॉपी हो गया"],
- askPh:["Ask about this diagram…","इस चित्र के बारे में पूछें…"],send:["Ask","पूछें"],
- askFallback:["I can answer questions about Server, Client, Router, Switch and Internet in demo mode. Open-ended questions need the Gemma 4 backend.","डेमो मोड में मैं सर्वर, क्लाइंट, राउटर, स्विच और इंटरनेट के बारे में बता सकता हूँ। खुले प्रश्नों के लिए Gemma 4 बैकएंड चाहिए।"],
- askHi:["Hi! Ask me about any part of the diagram.","नमस्ते! चित्र के किसी भी हिस्से के बारे में पूछें।"],
- pParts:["Parts explored","देखे गए हिस्से"],pBest:["Best quiz score","सबसे अच्छा स्कोर"],pTry:["Quizzes taken","क्विज़ दिए"],
- foot:["Explanations are written for learning and may contain mistakes. Check them against your textbook.","व्याख्याएँ सीखने के लिए हैं और उनमें गलतियाँ हो सकती हैं। अपनी पाठ्यपुस्तक से मिलाकर देखें।"]
-};
-let L=0,lvl=0,tab=0,sel=null,qi=0,score=0,answered=false,chat=[],P={seen:[],best:0,tries:0},custom=false,topic="net";
-const $=id=>document.getElementById(id),t=k=>UI[k][L];
-try{const s=localStorage.getItem("vsai");if(s)P=Object.assign(P,JSON.parse(s))}catch(e){}
-function save(){try{localStorage.setItem("vsai",JSON.stringify(P))}catch(e){}}
-P.hist=P.hist||[];P.log=P.log||[];P.ps=P.ps||{};P.wq=P.wq||{};P.sec=P.sec||0;P.days=P.days||[];P.games=P.games||0;P.name=P.name||"";
-const today=new Date().toISOString().slice(0,10);if(!P.days.includes(today))P.days.push(today);P.days=P.days.slice(-60);save();
-P.wk=P.wk||{};P.cards=P.cards||[];setInterval(()=>{if(!document.hidden){P.sec+=10;const k=lk(new Date());P.wk[k]=(P.wk[k]||0)+10;save()}},10000);
+  const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+  ? "http://localhost:8000"
+  : "https://visualstudy-ai.onrender.com";
 
-let dia=`<svg class="dia" viewBox="0 0 600 390" role="group" aria-label="Network diagram">
-<line x1="300" y1="82" x2="300" y2="128"/><line x1="300" y1="178" x2="300" y2="218"/>
-<line x1="300" y1="268" x2="130" y2="318"/><line x1="300" y1="268" x2="300" y2="318"/><line x1="300" y1="268" x2="470" y2="318"/>
-<g class="node" data-id="internet" tabindex="0" role="button"><path d="M230 70a30 30 0 0 1 20-48a40 40 0 0 1 76-6a32 32 0 0 1 42 22a26 26 0 0 1-6 32z" transform="translate(-6 -2)"/><text x="296" y="56" data-n="internet"></text></g>
-<g class="node" data-id="router" tabindex="0" role="button"><rect x="240" y="128" width="120" height="50" rx="10"/><text x="300" y="158" data-n="router"></text></g>
-<g class="node" data-id="switch" tabindex="0" role="button"><rect x="240" y="218" width="120" height="50" rx="10"/><text x="300" y="248" data-n="switch"></text></g>
-<g class="node" data-id="server" tabindex="0" role="button"><rect x="70" y="318" width="120" height="50" rx="10"/><text x="130" y="348" data-n="server"></text></g>
-<g class="node" data-id="client" tabindex="0" role="button"><rect x="240" y="318" width="120" height="50" rx="10"/><text x="300" y="348" data-n="client"></text></g>
-<g class="node" data-id="client" tabindex="0" role="button"><rect x="410" y="318" width="120" height="50" rx="10"/><text x="470" y="348" data-n="client"></text></g>
-</svg>`;
+  async function submitReport() {
+    const agentId = document.getElementById("agentId").value.trim();
+    const text = document.getElementById("reportText").value.trim();
+    const status = document.getElementById("status");
+    if (!text) { status.textContent = "Enter some report text first."; return; }
 
-const nd=(id,x,y,w,h,r)=>`<g class="node" data-id="${id}" tabindex="0" role="button"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}"/><text x="${x+w/2}" y="${y+h/2+5}" data-n="${id}"></text></g>`;
-const HD={
-vc:["Vena cava","महाशिरा","Large veins that bring oxygen-poor blood from the body back to the heart.","बड़ी शिराएँ जो शरीर से ऑक्सीजन-रहित रक्त हृदय तक लाती हैं।","It empties into the right atrium.","यह दाएँ अलिंद में खुलती है।"],
-ao:["Aorta","महाधमनी","The main artery that carries oxygen-rich blood from the heart to the whole body.","मुख्य धमनी जो ऑक्सीजन-युक्त रक्त हृदय से पूरे शरीर तक ले जाती है।","It leaves the left ventricle through the aortic valve.","यह महाधमनी वाल्व से होकर बाएँ निलय से निकलती है।"],
-ra:["Right atrium","दायाँ अलिंद","Receives oxygen-poor blood from the body.","शरीर से ऑक्सीजन-रहित रक्त प्राप्त करता है।","It pushes the blood down into the right ventricle.","यह रक्त को नीचे दाएँ निलय में भेजता है।"],
-la:["Left atrium","बायाँ अलिंद","Receives oxygen-rich blood from the lungs.","फेफड़ों से ऑक्सीजन-युक्त रक्त प्राप्त करता है।","It pushes the blood down into the left ventricle.","यह रक्त को नीचे बाएँ निलय में भेजता है।"],
-rv:["Right ventricle","दायाँ निलय","Pumps oxygen-poor blood to the lungs.","ऑक्सीजन-रहित रक्त को फेफड़ों तक पंप करता है।","Blood leaves through the pulmonary artery to pick up oxygen.","रक्त फुफ्फुसीय धमनी से निकलकर ऑक्सीजन लेने जाता है।"],
-lv:["Left ventricle","बायाँ निलय","Pumps oxygen-rich blood to the whole body.","ऑक्सीजन-युक्त रक्त को पूरे शरीर में पंप करता है।","Its wall is the thickest because it pushes blood the furthest.","इसकी दीवार सबसे मोटी होती है क्योंकि यह रक्त को सबसे दूर तक भेजता है।"]};
-const HDD={};for(const k in HD){const[n,nh,s,sh,d,dh]=HD[k];HDD[k]={n:[n,nh],s:[s,sh],d:[d,dh],a:[d,dh]}}
-const HS=`<svg class="dia" viewBox="0 0 600 390" role="group" aria-label="Heart diagram"><line x1="310" y1="130" x2="310" y2="372" stroke-dasharray="6 6"/>`+nd("vc",140,14,90,100,24)+nd("ao",270,14,100,80,32)+nd("ra",90,130,150,100,42)+nd("la",380,130,150,100,42)+nd("rv",120,250,160,125,52)+nd("lv",340,250,170,125,56)+`</svg>`;
-const HAQ=(q,qh,o,a)=>({q:[q,qh],o,a});
-const HQ=[HAQ("Which chamber pumps blood to the whole body?","कौन-सा कक्ष पूरे शरीर में रक्त पंप करता है?",[["Left ventricle","बायाँ निलय"],["Right atrium","दायाँ अलिंद"],["Right ventricle","दायाँ निलय"]],0),HAQ("Which vessel carries blood from the heart to the body?","कौन-सी वाहिका रक्त को हृदय से शरीर तक ले जाती है?",[["Aorta","महाधमनी"],["Vena cava","महाशिरा"],["Left atrium","बायाँ अलिंद"]],0),HAQ("Why is the left ventricle wall the thickest?","बाएँ निलय की दीवार सबसे मोटी क्यों होती है?",[["It pushes blood the furthest","यह रक्त को सबसे दूर तक भेजता है"],["It stores air","यह हवा जमा करता है"],["It filters blood","यह रक्त को छानता है"]],0)];
-const HN=[["Topic: the human heart.","विषय: मानव हृदय।"],["Atria receive blood; ventricles pump it out.","अलिंद रक्त लेते हैं; निलय उसे बाहर पंप करते हैं।"],["Right side: oxygen-poor blood to the lungs.","दायाँ भाग: ऑक्सीजन-रहित रक्त फेफड़ों तक।"],["Left side: oxygen-rich blood to the body via the aorta.","बायाँ भाग: ऑक्सीजन-युक्त रक्त महाधमनी से शरीर तक।"]];
-const HERO=[["Turn any textbook diagram into a lesson","किसी भी पाठ्यपुस्तक चित्र को पाठ में बदलें"],["Pick a diagram, tap a part, and learn it in Hindi or English. Then test yourself with a quiz and take revision notes.","चित्र चुनें, किसी हिस्से को छुएँ और हिन्दी या अंग्रेज़ी में सीखें। फिर क्विज़ से खुद को परखें और रिवीज़न नोट्स लें।"]];
-const T={net:{D,Q,NOTES,dia,tab:["Computer network","कंप्यूटर नेटवर्क"],ti:UI.dT,ov:UI.overview},heart:{D:HDD,Q:HQ,NOTES:HN,dia:HS,tab:["Human heart","मानव हृदय"],ti:["Human heart","मानव हृदय"],ov:["This diagram shows how blood flows through the four chambers of the heart and the large vessels attached to it.","यह चित्र दिखाता है कि रक्त हृदय के चार कक्षों और उनसे जुड़ी बड़ी वाहिकाओं में कैसे बहता है।"]}};
-const AM=[["Reading the image…","चित्र पढ़ा जा रहा है…"],["Finding labels and parts…","लेबल और हिस्से खोजे जा रहे हैं…"],["Writing explanations…","व्याख्याएँ लिखी जा रही हैं…"],["Ready. Tap a part to start. (Demo: pre-analysed)","तैयार। शुरू करने के लिए कोई हिस्सा छुएँ। (डेमो: पहले से विश्लेषित)"]];
-let anaI=3,tm=[];
-function showAna(){const a=$("ana");a.textContent=custom?"":AM[anaI][L];a.classList.toggle("done",anaI===3)}
-function analyze(){tm.forEach(clearTimeout);tm=[];const s=$("scan");s.classList.remove("go");void s.offsetWidth;s.classList.add("go");
- AM.forEach((x,i)=>tm.push(setTimeout(()=>{anaI=i;showAna()},i*550)))}
-function setTopic(k){topic=k;({D,Q,NOTES,dia}=T[k]);sel=null;qi=0;score=0;chat=[];tab=0;custom=false;gm=null;render();analyze()}
-const b=(e,h)=>L?h:e,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function lg(a){P.log.unshift({t:Date.now(),e:a});P.log=P.log.slice(0,8);save()}
-function streak(){let n=0,d=new Date();while(P.days.includes(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1)}return n}
-let RP='';
-function profile(){
- const xp=P.xp||0,H=P.hist,tt=H.reduce((a,x)=>a+x.s,0),dn=H.reduce((a,x)=>a+x.n,0),acc=dn?Math.round(tt/dn*100)+'%':'—',st=streak(),tm=P.sec<60?'<1 min':Math.floor(P.sec/60)+' min',weak=[];
- const mast=Object.keys(T).map(k=>`<h4>${esc(T[k].ti[L])}</h4>`+Object.keys(T[k].D).map(id=>{const s=P.ps[k+':'+id]||{r:0,w:0},n=esc(T[k].D[id].n[L]);let c='g0',i='○';
-  if(s.w>s.r){c='g3';i='⚠';weak.push(n)}else if(s.r>=2){c='g2';i='✔'}else if(s.r||P.seen.includes(k+':'+id)){c='g1';i='◐'}
-  return`<span class='pt ${c}'>${i} ${n}</span>`}).join('')).join('');
- const wq=Object.keys(P.wq).filter(k=>P.wq[k]>0).map(k=>{const[a,i]=k.split(':');return T[a]&&T[a].Q[i]?esc(T[a].Q[i].q[L]):''}).filter(Boolean);
- const bd=[['🎯','First quiz','पहला क्विज़',P.tries>=1],['💯','Perfect score','पूर्ण अंक',!!P.perfect],['🔭','Explorer','खोजकर्ता',P.seen.length>=6],['🇮🇳','Bilingual','द्विभाषी',!!P.hi],['🔥','3-day streak','3 दिन लगातार',st>=3],['🎮','Challenger','चुनौतीदाता',P.games>=1]];
- const rec=weak.length?b('Revise: ','दोहराएँ: ')+weak.slice(0,3).join(', '):!P.tries?b('Take your first quiz.','पहला क्विज़ दें।'):P.seen.filter(x=>x.startsWith(topic+':')).length<Object.keys(D).length?b('Explore the remaining parts of this diagram.','इस चित्र के बाकी हिस्से देखें।'):b('Great progress! Try the other diagram.','बहुत अच्छा! दूसरा चित्र आज़माएँ।');
- RP=`${P.name||'Student'} | Level ${Math.floor(xp/50)+1} | ${xp} XP | Quiz accuracy ${acc} (${H.length} quizzes) | Study time ${tm} | Streak ${st} days | Needs revision: ${weak.concat(wq).join('; ')||'none'}`;
- return`<div class='pf'><input id='pn' maxlength='30' value="${esc(P.name||'')}" placeholder="${b('Your name','आपका नाम')}" aria-label="${b('Your name','आपका नाम')}">
-<div class='sg'><div><b>${Math.floor(xp/50)+1}</b>${b('Level','स्तर')}</div><div><b>${acc}</b>${b('Quiz accuracy','क्विज़ सटीकता')}</div><div><b>${tm}</b>${b('Study time','पढ़ाई का समय')}</div><div><b>${st} 🔥</b>${b('Day streak','लगातार दिन')}</div></div>
-<h4>${b('Quiz scores','क्विज़ स्कोर')}</h4>${H.length?`<div class='hbs'>${H.map(x=>`<div class='hb'><i style='height:${Math.max(18,Math.round(x.s/x.n*100))}%'><small>${x.s}/${x.n}</small></i></div>`).join('')}</div>`:`<p class='hint'>${b('No quizzes yet.','अभी कोई क्विज़ नहीं।')}</p>`}
-<h4>${b('Mastery by part','हिस्सों पर पकड़')}</h4>${mast}<p class='hint'>✔ ${b('strong','मज़बूत')} ◐ ${b('learning','सीख रहे')} ⚠ ${b('needs work','सुधार चाहिए')} ○ ${b('not started','शुरू नहीं')}</p>
-<h4>${b('Needs revision','दोहराने योग्य')}</h4>${weak.length||wq.length?`<ul class='n'>${weak.concat(wq).map(w=>`<li>${w}</li>`).join('')}</ul>`:`<p class='hint'>${b('Nothing yet. Keep practising! 🎉','अभी कुछ नहीं। अभ्यास जारी रखें! 🎉')}</p>`}
-<h4>${b('Badges','बैज')}</h4>${bd.map(x=>`<span class='bg ${x[3]?'on':''}'>${x[3]?x[0]:'🔒'} ${L?x[2]:x[1]}</span>`).join('')}
-<h4>${b('Recent activity','हाल की गतिविधि')}</h4>${P.log.length?`<ul class='n lgl'>${P.log.map(x=>`<li>${new Date(x.t).toLocaleString([],{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}: ${esc(x.e[L])}</li>`).join('')}</ul>`:`<p class='hint'>—</p>`}
-<div class='note'><b>${b('Next step: ','अगला कदम: ')}</b>${rec}</div>
-<div class='row'><button class='btn' id='rp'>${b('📋 Copy report','📋 रिपोर्ट कॉपी करें')}</button></div></div>`}
-let view='dash';
-const NV=[['🏠 Dashboard','📖 Study room','🃏 Flashcards','⚡ Quick study','🤖 Live AI'],['🏠 डैशबोर्ड','📖 स्टडी रूम','🃏 फ़्लैशकार्ड','⚡ क्विक स्टडी','🤖 लाइव AI']];
-function lk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-const act=i=>[view==='dash',view==='study'&&tab!==1&&tab!==3,view==='cards',view==='study'&&tab===1,view==='study'&&tab===3][i];
-function nav(i){if(i===1)tab=0;if(i===3)tab=1;if(i===4)tab=3;view=['dash','study','cards','study','study'][i];window.scrollTo(0,0);render()}
-function dashHtml(){
- const st=streak(),now=new Date(),mon=new Date(now);mon.setDate(now.getDate()-((now.getDay()+6)%7));
- const lab=L?['सो','मं','बु','गु','शु','श','र']:['M','T','W','T','F','S','S'],wd=[];let tot=0,mx=60;
- for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const s=P.wk[lk(d)]||0;tot+=s;mx=Math.max(mx,s);wd.push({s,td:lk(d)===lk(now),l:lab[i]})}
- const mins=Math.round(tot/60),studied=Object.keys(T).filter(k=>P.seen.some(x=>x.startsWith(k+':'))).length,nm=P.name?', '+esc(P.name):'';
- return`<div class='wb'><h2>${b('Welcome back','वापस स्वागत है')}${nm}</h2><p>${b('You are on a '+st+'-day streak. One more diagram keeps it going.','आप '+st+' दिन की लगातार पढ़ाई पर हैं। एक और चित्र इसे जारी रखेगा।')}</p><button class='btn' id='cont'>${b('Continue studying','पढ़ाई जारी रखें')}</button></div>
-<div class='st4'><div style='border-top-color:#8b5cf6'><b>${studied}</b>${b('Diagrams studied','चित्र पढ़े')}</div><div style='border-top-color:#fb7a48'><b>${P.tries}</b>${b('Quizzes taken','क्विज़ दिए')}</div><div style='border-top-color:#38b6ff'><b>${tot&&!mins?'<1':mins}</b>${b('Minutes this week','इस सप्ताह मिनट')}</div><div style='border-top-color:#2bc48a'><b>${P.cards.length}</b>${b('Cards mastered','कार्ड याद')}</div></div>
-<div class='card'><h3>${b('Weekly study time','साप्ताहिक पढ़ाई का समय')}</h3><div class='wbars'>${wd.map(x=>`<div class='wc'><i class='${x.td?'td':''}' style='height:${Math.max(4,Math.round(x.s/mx*100))}%' title='${Math.round(x.s/60)} min'></i><small>${x.l}</small></div>`).join('')}</div></div>`}
-function cardsHtml(){
- return`<h2 style='margin:6px 0 4px'>${b('Flashcards','फ़्लैशकार्ड')}</h2><p class='hint'>${b('Tap a card to flip it. Mark the ones you know.','कार्ड पलटने के लिए छुएँ। जो याद हों उन्हें चिह्नित करें।')}</p>`+Object.keys(T).map(k=>`<h3 style='margin:14px 0 8px'>${esc(T[k].ti[L])}</h3><div class='fcg'>`+Object.keys(T[k].D).map(id=>{const c=T[k].D[id],m=P.cards.includes(k+':'+id);return`<div class='fc ${m?'ok':''}' tabindex='0' role='button'><div class='ff'><b>${esc(c.n[L])}</b><small>${b('Tap to flip','पलटने के लिए छुएँ')}</small></div><div class='fb'><p>${esc(c.s[L])}</p><button class='btn' data-m='${k}:${id}'>${m?'✔ '+b('Mastered','याद है'):b('I know this','मुझे याद है')}</button></div></div>`}).join('')+`</div>`).join('')}
-function renderV(){
- document.body.dataset.v=view;
- $('nv').innerHTML=NV[L].map((x,i)=>`<button data-n='${i}' class='${act(i)?'on':''}'>${x}</button>`).join('');
- $('nv').querySelectorAll('button').forEach(x=>x.onclick=()=>nav(+x.dataset.n));
- if(view==='dash'){$('dash').innerHTML=dashHtml();$('cont').onclick=()=>nav(1)}
- if(view==='cards'){const cv=$('cardsV');cv.innerHTML=cardsHtml();
-  cv.querySelectorAll('.fc').forEach(c=>{const f=()=>c.classList.toggle('flip');c.onclick=f;c.onkeydown=e=>{if(e.target===c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();f()}}});
-  cv.querySelectorAll('[data-m]').forEach(bt=>bt.onclick=e=>{e.stopPropagation();const k=bt.dataset.m,i=P.cards.indexOf(k),m=i<0;m?P.cards.push(k):P.cards.splice(i,1);save();
-   bt.textContent=m?'✔ '+b('Mastered','याद है'):b('I know this','मुझे याद है');bt.closest('.fc').classList.toggle('ok',m);
-   if(m){const[tk,id]=k.split(':'),nmx=T[tk].D[id].n;lg(['Mastered card: '+nmx[0],'कार्ड याद: '+nmx[1]])}})}
-}
-const FL={net:["client","switch","router","internet","router","switch","server"],heart:["vc","ra","rv","la","lv","ao"]};
-let tourT,gm=null;
-function playTour(){clearTimeout(tourT);const ids=FL[topic];if(!ids)return;let i=0;sel=null;tab=0;render();
- const step=()=>{const an=$("ana");
-  if(i>=ids.length){an.textContent=L?"प्रवाह पूरा 🎉 +20 XP":"Flow complete 🎉 +20 XP";an.classList.add("done");P.xp=(P.xp||0)+20;lg(["Watched the flow: "+T[topic].ti[0],"प्रवाह देखा: "+T[topic].ti[1]]);return}
-  const id=ids[i],k=topic+":"+id;sel=id;if(!P.seen.includes(k)){P.seen.push(k);save()}
-  const st=$("stage"),svg=st.querySelector("svg"),g=st.querySelector(`.node[data-id=${id}]`);
-  st.querySelectorAll(".node").forEach(n=>n.classList.toggle("sel",n.dataset.id===id));
-  let d=svg.querySelector(".dot");if(!d){d=document.createElementNS("http://www.w3.org/2000/svg","circle");d.setAttribute("r","11");d.setAttribute("class","dot");svg.appendChild(d);d.style.transition="none"}
-  const b=g.querySelector("rect,path").getBBox();d.style.transform=`translate(${b.x+b.width/2}px,${b.y+b.height/2}px)`;void d.getBoundingClientRect();d.style.transition="";
-  $("pane").innerHTML=explain();bind();an.textContent=`${i+1}/${ids.length} · ${D[id].n[L]}`;an.classList.remove("done");
-  i++;tourT=setTimeout(step,2600)};
- step()}
-function gNew(){gm={ids:Object.keys(D).sort(()=>Math.random()-.5).slice(0,5),i:0,ok:0,fb:""}}
-function game(){if(!gm)gNew();
- if(gm.i>=gm.ids.length)return`<h3>${gm.ok} / ${gm.ids.length} 🎉</h3><p>+${gm.ok*10} XP</p><div class="row"><button class="btn pri" id="gAgain">${t("again")}</button></div>`;
- return`<p class="hint">${gm.i+1} / ${gm.ids.length}</p><h3>${L?"चित्र में छुएँ:":"Tap this in the diagram:"}</h3><p style="font:800 1.8rem 'Bricolage Grotesque',sans-serif;margin:8px 0">${D[gm.ids[gm.i]].n[L]}</p><p>${gm.fb}</p>`}
-function guess(id){const tg=gm.ids[gm.i],c=id===tg,sk=topic+":"+tg,ps=P.ps[sk]=P.ps[sk]||{r:0,w:0};c?ps.r++:ps.w++;if(c){gm.ok++;P.xp=(P.xp||0)+10}save();
- gm.fb=c?(L?"सही! ✅":"Correct! ✅"):(L?"गलत: आपने "+D[id].n[L]+" छुआ ❌":"Not quite: that was "+D[id].n[L]+" ❌");gm.i++;if(gm.i>=gm.ids.length){P.games++;lg(["Challenge: "+gm.ok+"/"+gm.ids.length+" ("+T[topic].ti[0]+")","चुनौती: "+gm.ok+"/"+gm.ids.length+" ("+T[topic].ti[1]+")"])}render()}
-function pick(id){if(tab===4&&gm&&gm.i<gm.ids.length){guess(id);return}const k=topic+":"+id;if(!P.seen.includes(k)){P.seen.push(k);save()}sel=id;tab=0;render()}
-function stage(){
-  const st=$("stage");
-  if(!custom){st.innerHTML=dia;st.querySelectorAll(".node").forEach(g=>{
-    g.addEventListener("click",()=>pick(g.dataset.id));
-    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(g.dataset.id)}});
-  })}
-  st.querySelectorAll("[data-n]").forEach(x=>x.textContent=D[x.dataset.n].n[L]);
-  st.querySelectorAll(".node").forEach(g=>g.classList.toggle("sel",g.dataset.id===sel));
-}
-function explain(){
-  if(custom)return`<p>${t("demo")}</p>`;
-  if(!sel)return`<p>${T[topic].ov[L]}</p><p class="hint">${t("pick")}</p>`;
-  const c=D[sel],parts=[c.s[L]];if(lvl>=1)parts.push(c.d[L]);if(lvl>=2)parts.push(c.a[L]);
-  return`<h3><span class="hl">${c.n[L]}</span></h3>`+parts.map(p=>`<p>${p}</p>`).join("")+`<div class="row"><button class="btn" id="say">🔊 ${L?"सुनें":"Listen"}</button></div>`;
-}
-function quiz(){
-  if(!Q.length)return`<p>${L?"इस चित्र के लिए क्विज़ नहीं बना।":"No quiz was generated for this diagram."}</p>`;
-  if(qi>=Q.length){const pct=Math.round(score/Q.length*100);
-    return`<h3>${t("score")}</h3><p style="font:800 2.4rem 'Bricolage Grotesque',sans-serif;margin:8px 0">${score} / ${Q.length}</p><div class="bar"><i style="width:${pct}%"></i></div><p><b>${(pct>=75?["Great work! 🌟","बहुत बढ़िया! 🌟"]:pct>=50?["Good effort. Check the notes and try again. 💪","अच्छा प्रयास। नोट्स देखकर फिर कोशिश करें। 💪"]:["Keep going. Tap the parts and try again. 🙂","लगे रहिए। हिस्सों को छूकर फिर कोशिश करें। 🙂"])[L]}</b></p><div class="row"><button class="btn pri" id="again">${t("again")}</button></div>`}
-  const q=Q[qi];
-  return`<p class="hint">${t("qOf")} ${qi+1} / ${Q.length}</p><h3>${esc(q.q[L])}</h3>`+q.o.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o[L])}</button>`).join("")+`<div id="fb" class="hint"></div><div class="row" id="nx"></div>`;
-}
-function notes(){return`<ul class="n">${NOTES.map(n=>`<li>${esc(n[L])}</li>`).join("")}</ul><div class="row"><button class="btn" id="cp">${t("copy")}</button></div>`}
-function askv(){
-  const m=chat.length?chat:[{r:"ai",x:t("askHi")}];
-  return`<div class="chat" id="chat">${m.map(c=>`<div class="msg ${c.r==="me"?"me":"ai"}">${c.x}</div>`).join("")}</div><form class="ask" id="af"><input id="aq" placeholder="${t("askPh")}" aria-label="${t("askPh")}"><button class="btn pri">${t("send")}</button></form>`;
-}
-function reply(q){
-  const s=q.toLowerCase();
-  for(const k in D){if(s.includes(k)||s.includes(D[k].n[1]))return`<b>${esc(D[k].n[L])}:</b> ${esc(D[k].s[L])} ${esc(D[k].d[L])}`}
-  return t("askFallback");
-}
-function render(){clearTimeout(tourT);
-  document.documentElement.lang=L?"hi":"en";
-  $("lEn").setAttribute("aria-pressed",!L);$("lHi").setAttribute("aria-pressed",!!L);
-  $("lvLbl").textContent=t("lv");$("lvLbl").style.cssText="position:absolute;left:-9999px";
-  [...$("lvl").options].forEach((o,i)=>o.textContent=UI.lvs[L][i]);$("lvl").value=lvl;$("lvl").setAttribute("aria-label",t("lv"));
-  $("dT").textContent=T[topic].ti[L];$("dH").textContent=t("dH");$("upT").textContent=t("up");$("back").textContent=t("back");$("back").hidden=!custom;$("play").hidden=custom;$("play").textContent=L?"▶ प्रवाह देखें":"▶ Watch the flow";
-  $("demoNote").textContent=t("demo");$("tN").textContent=T.net.tab[L];$("tH").textContent=T.heart.tab[L];$("tN").setAttribute("aria-pressed",topic==="net");$("tH").setAttribute("aria-pressed",topic==="heart");$("hT").textContent=HERO[0][L];$("hP").textContent=HERO[1][L];showAna();$("foot").textContent=t("foot");
-  $("tabs").innerHTML=UI.tabs[L].map((x,i)=>`<button role="tab" aria-selected="${i===tab}" data-t="${i}">${x}</button>`).join("");
-  $("pane").innerHTML=[explain,quiz,notes,askv,game,profile][tab]();
-  stage();
-  const n=P.seen.filter(x=>x.startsWith(topic+":")).length,tot=Object.keys(D).length;
-  $("prog").innerHTML=`<div><b>${n}/${tot}</b><small>${t("pParts")}</small><div class="bar"><i style="width:${tot?n/tot*100:0}%"></i></div></div><div><b>${P.best}/${Q.length}</b><small>${t("pBest")}</small></div><div><b>${P.tries}</b><small>${t("pTry")}</small></div><div><b>${["🌱","🔭","📚","🧠"][Math.min(3,Math.floor((P.xp||0)/50))]} ${P.xp||0}</b><small>XP</small></div>`;
-  bind();renderV();
-}
-function bind(){
-  document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=+b.dataset.t;render()});
-  const ag=$("again");if(ag)ag.onclick=()=>{qi=0;score=0;render()};
-  const pn=$("pn");if(pn)pn.onchange=()=>{P.name=pn.value.trim().slice(0,30);save()};
-  const rp=$("rp");if(rp)rp.onclick=()=>{try{navigator.clipboard.writeText(RP).then(()=>rp.textContent=t("copied"))}catch(e){}};
-  const ga=$("gAgain");if(ga)ga.onclick=()=>{gNew();render()};
-  const sy=$("say");if(sy)sy.onclick=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance($("pane").innerText.replace(/🔊.*/,""));u.lang=L?"hi-IN":"en-IN";speechSynthesis.speak(u)}catch(e){}};
-  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
-    const q=Q[qi],i=+b.dataset.i;document.querySelectorAll(".opt").forEach((x,j)=>{x.disabled=true;if(j===q.a)x.classList.add("ok")});
-    const wk=topic+":"+qi;if(i===q.a){score++;P.wq[wk]=Math.max(0,(P.wq[wk]||0)-1);$("fb").textContent=t("right")}else{P.wq[wk]=(P.wq[wk]||0)+1;b.classList.add("no");$("fb").textContent=t("wrong")+" "+q.o[q.a][L]}save();
-    const last=qi===Q.length-1;
-    $("nx").innerHTML=`<button class="btn pri" id="nb">${last?t("fin"):t("next")}</button>`;
-    $("nb").onclick=()=>{qi++;if(qi>=Q.length){P.tries++;P.best=Math.max(P.best,score);P.xp=(P.xp||0)+score*10;P.hist.push({t:Date.now(),k:topic,s:score,n:Q.length});P.hist=P.hist.slice(-10);if(score===Q.length)P.perfect=1;lg([T[topic].ti[0]+" quiz: "+score+"/"+Q.length,T[topic].ti[1]+" क्विज़: "+score+"/"+Q.length])}render()};$("nb").focus();
-  });
-  const cp=$("cp");if(cp)cp.onclick=()=>{const tx=NOTES.map(n=>"• "+n[L]).join("\n");
-    try{navigator.clipboard.writeText(tx).then(()=>cp.textContent=t("copied"))}catch(e){}};
-  const af=$("af");if(af)af.onsubmit=e=>{e.preventDefault();const v=$("aq").value.trim();if(!v)return;
-    chat.push({r:"me",x:v.replace(/</g,"&lt;")},{r:"ai",x:reply(v)});render();const c=$("chat");c.scrollTop=c.scrollHeight;$("aq").focus()};
-}
-$("lEn").onclick=()=>{L=0;render()};$("lHi").onclick=()=>{L=1;P.hi=1;save();render()};
-$("lvl").onchange=e=>{lvl=+e.target.value;render()};
-document.querySelectorAll("#topics button").forEach(b=>b.onclick=()=>setTopic(b.dataset.k));
-$("upBtn").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("file").click()}});
-$("play").onclick=playTour;
-
-/* ================= Backend connection (Gemma 4 via Flask) ================= */
-const API="http://127.0.0.1:5000/api/analyze";
-let prevTopic="net",busy=false,cErr="",unc=[];
-UI.demo=["Sample diagrams have hand-made clickable regions. Your own uploads are analysed by the Gemma 4 backend at 127.0.0.1:5000 (run python app.py first).","नमूना चित्रों में हाथ से बने क्लिक करने योग्य हिस्से हैं। आपकी अपनी तस्वीर Gemma 4 बैकएंड (127.0.0.1:5000) पढ़ता है; पहले python app.py चलाएँ।"];
-
-const _explain=explain;
-explain=function(){
-  if(!custom)return _explain();
-  if(busy)return`<p>⏳ ${L?"विश्लेषण हो रहा है… (लोकल मॉडल में 1-2 मिनट लग सकते हैं)":"Analysing… (a local model can take 1-2 minutes)"}</p>`;
-  if(cErr)return`<p>❌ ${esc(cErr)}</p>`;
-  if(topic!=="custom")return`<p>${t("demo")}</p>`;
-  let h=`<h3><span class="hl">${esc(T.custom.ti[0])}</span></h3><p>${esc(T.custom.ov[0])}</p>`;
-  Object.values(D).forEach(c=>{h+=`<p><b>${esc(c.n[0])}:</b> ${esc(c.s[0])}</p>`});
-  if(unc.length){h+=`<h4>⚠️ ${L?"AI को इन पर पक्का नहीं है":"The AI is not sure about these"}</h4>`+unc.map(u=>`<div class="note">${esc(u)}</div>`).join("")}
-  return h;
-};
-
-const _game=game;
-game=function(){
-  if(custom)return`<p>${L?"चुनौती सिर्फ़ नमूना चित्रों के लिए है।":"Challenge works on the sample diagrams only."}</p>`;
-  return _game();
-};
-
-$("file").onchange=async e=>{
-  const f=e.target.files[0];if(!f)return;
-  if(topic!=="custom")prevTopic=topic;
-  custom=true;busy=true;cErr="";sel=null;tab=0;
-  const url=URL.createObjectURL(f);
-  const show=()=>{$("stage").innerHTML=`<img class="prev" alt="Uploaded diagram" src="${url}">`};
-  render();show();
-  $("ana").textContent=L?"⏳ विश्लेषण हो रहा है…":"⏳ Analysing…";
-  const fd=new FormData();
-  fd.append("image",f);
-  fd.append("lang",L?"Hindi":"English");
-  fd.append("level",["Beginner","Intermediate","Advanced"][lvl]);
-  try{
-    const r=await fetch(API,{method:"POST",body:fd});
-    let j;
-    try{j=await r.json()}catch{throw new Error((L?"बैकएंड से गलत जवाब (status ":"Bad reply from backend (status ")+r.status+")")}
-    if(j.error)throw new Error(j.error);
-    const Dn={};
-    (j.components||[]).forEach((c,i)=>{const n=[c.name,c.name],x=[c.explanation,c.explanation];Dn["c"+i]={n,s:x,d:x,a:x}});
-    const Qn=(j.quiz||[]).map(q=>({q:[q.q,q.q],o:q.options.map(o=>[o,o]),a:q.answer}));
-    const Nn=(j.notes||[]).map(n=>[n,n]);
-    unc=(j.uncertain||[]).filter(u=>u&&!/^(none|n\/a|nil|-)\.?$/i.test(String(u).trim()));
-    T.custom={D:Dn,Q:Qn,NOTES:Nn,dia:"",tab:[j.topic,j.topic],ti:[j.topic,j.topic],ov:[j.summary,j.summary]};
-    topic="custom";({D,Q,NOTES,dia}=T.custom);qi=0;score=0;gm=null;chat=[];
-  }catch(err){
-    cErr=err.message==="Failed to fetch"?(L?"बैकएंड नहीं मिला। क्या python app.py चल रहा है?":"Cannot reach the backend. Is python app.py running?"):err.message;
+    status.textContent = "Submitting...";
+    try {
+      const res = await fetch(`${API_BASE}/reports`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agent_id: agentId, text }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(JSON.stringify(data));
+      status.textContent = `Submitted ✓ (id: ${data.id})`;
+      document.getElementById("reportText").value = "";
+      loadDealers();
+    } catch (err) {
+      status.textContent = "Error: " + err.message;
+    }
   }
-  busy=false;e.target.value="";render();show();
-};
 
-$("back").onclick=()=>{
-  custom=false;busy=false;cErr="";$("file").value="";
-  topic=prevTopic;({D,Q,NOTES,dia}=T[topic]);qi=0;score=0;sel=null;gm=null;render();
-};
-/* ========================================================================== */
+  async function loadDealers() {
+    const res = await fetch(`${API_BASE}/dealers/ranked`);
+    const dealers = await res.json();
+    const list = document.getElementById("dealerList");
+    if (dealers.length === 0) {
+      list.innerHTML = "<p style='color:#666'>No dealers yet — submit a report above.</p>";
+      return;
+    }
+    list.innerHTML = dealers.map(d => `
+      <div class="card">
+        <span class="badge ${d.risk_band}">${d.risk_band.toUpperCase()}</span>
+        <span class="score">score: ${d.viability_score}</span>
+        <div style="margin-top:8px; font-weight:600;">${d.shop_type || "Unknown shop type"}</div>
+        <div style="color:#aaa; font-size:13px;">${d.location || "Location not extracted"}</div>
+        <div style="color:#888; font-size:12px; margin-top:4px;">Agent: ${d.agent_id} • Stock: ${(d.stock_signals || []).join(", ") || "—"}</div>
+      </div>
+    `).join("");
+  }
 
-render();analyze();
+  loadDealers();
 </script>
 </body>
 </html>
